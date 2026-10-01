@@ -35,7 +35,7 @@ function module.resetPath(recompute: boolean)
 	module.waypoints = nil
 	module.waypointIndex = 0
 	
-	utils.humanoid:MoveTo(utils.root.Position)
+	char.humanoid:MoveTo(char.root.Position)
 	if recompute then prevTargetPos = nil end
 end
 
@@ -49,12 +49,12 @@ function module.followWaypoints()
 	end
 
 	local waypointPos = module.waypoints[module.waypointIndex].Position
-	utils.humanoid:MoveTo(waypointPos)
+	char.humanoid:MoveTo(waypointPos)
 	
-	local rootPosition = utils.root.Position
+	local rootPosition = char.root.Position
 	local direction = waypointPos - rootPosition
 
-	waypointRaycastParams.FilterDescendantsInstances = {utils.character}
+	waypointRaycastParams.FilterDescendantsInstances = {char.character}
 
 	local raycast = workspace:Raycast(rootPosition, direction, waypointRaycastParams)
 	if raycast then module.resetPath(true) return end
@@ -74,7 +74,7 @@ function module.computePath()
 	end
 	
 	local success, err = pcall(function()
-		module.path:ComputeAsync(utils.root.Position, module.targetPos)
+		module.path:ComputeAsync(char.root.Position, module.targetPos)
 	end)
 
 	if module.path and success and module.path.Status == Enum.PathStatus.Success then
@@ -136,7 +136,7 @@ function module.togglePathfinding(enable: boolean)
 end
 
 module.connection = runService.Heartbeat:Connect(function()
-	if not utils.humanoid or not utils.root or not module.pathfindingEnabled then return end
+	if not char.humanoid or not char.root or not module.pathfindingEnabled then return end
 	module.followWaypoints()
 
 	local currentTime = os.clock()
