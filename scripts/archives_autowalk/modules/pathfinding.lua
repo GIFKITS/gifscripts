@@ -12,6 +12,9 @@ module.agentParams = {
 	AgentRadius = 1.5,
 	AgentHeight = 5.0,
 	AgentCanJump = false,
+	Costs = {
+		Avoid = math.huge,
+	}
 }
 module.path = nil :: Path
 module.targetPos = nil :: Vector3?
@@ -35,6 +38,7 @@ function module.resetPath(recompute: boolean)
 
 	module.waypoints = nil
 	module.waypointIndex = 0
+	module.waypointPos = nil
 
 	if char.humanoid then char.humanoid:MoveTo(char.root.Position) end
 	if recompute then prevTargetPos = nil end
