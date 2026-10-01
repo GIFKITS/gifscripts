@@ -26,4 +26,4 @@ pathfinding.createAction("door", 1, function()
 	return room:GetPivot().Position
 end)
 
-warn("success")
+warn("success2")
