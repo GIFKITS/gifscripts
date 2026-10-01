@@ -35,11 +35,11 @@ function module.resetPath(recompute: boolean)
 	module.waypoints = nil
 	module.waypointIndex = 0
 
-	char.humanoid:MoveTo(char.root.Position)
+	if char.humanoid then char.humanoid:MoveTo(char.root.Position) end
 	if recompute then prevTargetPos = nil end
 end
 
-function module.computeWaypoints()
+function module.followWaypoints()
 	if not module.waypoints or module.pathCompleted then return end
 
 	if module.waypointIndex > #module.waypoints then
@@ -63,21 +63,19 @@ function module.computeWaypoints()
 end
 
 function module.computePath()
-	if prevTargetPos == module.targetPos then return end
+	if not module.targetPos then module.resetPath(true) return end
+	
+	if prevTargetPos == module.targetPos and not module.pathCompleted then return end
 	prevTargetPos = module.targetPos
 
 	module.resetPath()
 	module.path = pathfindingService:CreatePath(module.agentParams)
 
-	if module.targetPos.Magnitude == math.huge then
-		return
-	end
-
 	local success, err = pcall(function()
 		module.path:ComputeAsync(char.root.Position, module.targetPos)
 	end)
 
-	if module.path and success and module.path.Status == Enum.PathStatus.Success then
+	if success and module.path.Status == Enum.PathStatus.Success then
 		module.waypoints = module.path:GetWaypoints()
 		module.waypointIndex = 2
 		warn("PATH SUCCESS")
@@ -88,6 +86,9 @@ function module.computePath()
 end
 
 function module.updateAction()
+	module.currentAction = nil
+	module.targetPos = nil
+	
 	local actions = {}
 
 	for _,action in module.actions do
@@ -112,7 +113,7 @@ end
 function module.createAction(name, priority, callback)
 	if module.actions[name] then error(string.format("An action with the name %q already exists", tostring(name))) end
 
-	module.actions[name] = {
+	local action = {
 		name = name,
 		priority = priority,
 
@@ -121,11 +122,18 @@ function module.createAction(name, priority, callback)
 	}
 
 	module.actions[name].destroy = function()
+		if module.currentAction == action then 
+			module.currentAction = nil
+			module.targetPos = nil
+			prevTargetPos = nil
+			module.resetPath(false)
+		end
 		module.actions[name].pathCompleted:Destroy()
 		module.actions[name] = nil
 	end
-
-	return module.actions[name]
+	
+	module.actions[name] = action
+	return action
 end
 
 function module.togglePathfinding(enable: boolean)
@@ -133,12 +141,14 @@ function module.togglePathfinding(enable: boolean)
 	module.pathfindingEnabled = enable
 	if not enable then
 		module.resetPath(true)
+		module.currentAction = nil
+		module.targetPos = nil
 	end
 end
 
 module.connection = runService.Heartbeat:Connect(function()
 	if not char.humanoid or not char.root or not module.pathfindingEnabled then return end
-	module.computeWaypoints()
+	module.followWaypoints()
 	
 	local currentTime = os.clock()
 	if currentTime-lastUpdated < 1/module.updateRate then return end
