@@ -52,7 +52,7 @@ function module.computeWaypoints()
 	char.humanoid:MoveTo(waypointPos)
 	
 	local rootPosition = char.root.Position
-	local direction = module.waypointPos - rootPosition
+	local direction = waypointPos - rootPosition
 
 	waypointRaycastParams.FilterDescendantsInstances = {char.character}
 
