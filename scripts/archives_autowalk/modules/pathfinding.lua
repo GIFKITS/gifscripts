@@ -60,7 +60,7 @@ function module.computeWaypoints()
 	local raycast = workspace:Raycast(rootPosition, direction, waypointRaycastParams)
 	if raycast then module.resetPath(true) return end
 
-	if direction.Magnitude < 1 then module.waypointIndex += 1 end
+	if (direction*Vector3.new(1,0,1)).Magnitude < 1 then module.waypointIndex += 1 end
 end
 
 function module.computePath()
