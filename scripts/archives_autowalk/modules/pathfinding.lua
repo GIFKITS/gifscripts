@@ -121,14 +121,14 @@ function module.createAction(name, priority, callback)
 		pathCompleted = Instance.new("BindableEvent"),
 	}
 
-	module.actions[name].destroy = function()
-		if module.currentAction == action then 
+	action.destroy = function()
+		if module.currentAction == action then
 			module.currentAction = nil
 			module.targetPos = nil
 			prevTargetPos = nil
 			module.resetPath(false)
 		end
-		module.actions[name].pathCompleted:Destroy()
+		action.pathCompleted:Destroy()
 		module.actions[name] = nil
 	end
 	
