@@ -14,6 +14,7 @@ module.agentParams = {
 	AgentCanJump = false,
 	Costs = {
 		Avoid = math.huge,
+		[""] = math.huge,
 	}
 }
 module.path = nil :: Path
@@ -22,7 +23,6 @@ module.pathCompleted = false
 
 module.waypoints = nil :: {PathWaypoint}
 module.waypointIndex = 0
-module.waypointPos = nil :: Vector3?
 
 module.actions = {}
 module.currentAction = nil
@@ -38,7 +38,6 @@ function module.resetPath(recompute: boolean)
 
 	module.waypoints = nil
 	module.waypointIndex = 0
-	module.waypointPos = nil
 
 	if char.humanoid then char.humanoid:MoveTo(char.root.Position) end
 	if recompute then prevTargetPos = nil end
@@ -53,10 +52,11 @@ function module.followWaypoints()
 		return
 	end
 
-	module.waypointPos = module.waypoints[module.waypointIndex].Position
+	local waypointPos = module.waypoints[module.waypointIndex].Position
+	char.humanoid:MoveTo(waypointPos)
 	
 	local rootPosition = char.root.Position
-	local direction = module.waypointPos - rootPosition
+	local direction = waypointPos - rootPosition
 
 	waypointRaycastParams.FilterDescendantsInstances = {char.character}
 
@@ -152,9 +152,7 @@ end
 
 module.connection = runService.Heartbeat:Connect(function()
 	if not char.humanoid or not char.root or not module.pathfindingEnabled then return end
-	
 	module.followWaypoints()
-	if module.waypointPos then char.humanoid:MoveTo(module.waypointPos) end
 	
 	local currentTime = os.clock()
 	if currentTime-lastUpdated < 1/module.updateRate then return end
