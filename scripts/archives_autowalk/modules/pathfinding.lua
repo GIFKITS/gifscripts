@@ -80,6 +80,7 @@ function module.computePath()
 	if module.path and success and module.path.Status == Enum.PathStatus.Success then
 		module.waypoints = module.path:GetWaypoints()
 		module.waypointIndex = 2
+		warn("path success")
 		return
 	end
 	
