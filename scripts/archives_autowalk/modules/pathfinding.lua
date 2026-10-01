@@ -19,6 +19,7 @@ module.pathCompleted = false
 
 module.waypoints = nil :: {PathWaypoint}
 module.waypointIndex = 0
+module.waypointPos = nil :: Vector3?
 
 module.actions = {}
 module.currentAction = nil
@@ -48,11 +49,10 @@ function module.followWaypoints()
 		return
 	end
 
-	local waypointPos = module.waypoints[module.waypointIndex].Position
-	char.humanoid:MoveTo(waypointPos)
+	module.waypointPos = module.waypoints[module.waypointIndex].Position
 	
 	local rootPosition = char.root.Position
-	local direction = waypointPos - rootPosition
+	local direction = module.waypointPos - rootPosition
 
 	waypointRaycastParams.FilterDescendantsInstances = {char.character}
 
@@ -148,7 +148,9 @@ end
 
 module.connection = runService.Heartbeat:Connect(function()
 	if not char.humanoid or not char.root or not module.pathfindingEnabled then return end
+	
 	module.followWaypoints()
+	if module.waypointPos then char.humanoid:MoveTo(module.waypointPos) end
 	
 	local currentTime = os.clock()
 	if currentTime-lastUpdated < 1/module.updateRate then return end
