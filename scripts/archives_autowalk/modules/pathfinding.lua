@@ -4,6 +4,7 @@ local pathfindingService = game:GetService("PathfindingService")
 local runService = game:GetService("RunService")
 
 local char = loadstring(game:HttpGet("https://raw.githubusercontent.com/GIFKITS/gifscripts/refs/heads/main/scripts/archives_autowalk/modules/char.lua"))()
+local moveFixConnection = loadstring(game:HttpGet("https://raw.githubusercontent.com/GIFKITS/gifscripts/refs/heads/main/scripts/archives_autowalk/modules/moveFix.lua"))()
 
 module.pathfindingEnabled = true
 module.updateRate = 2
@@ -37,7 +38,8 @@ function module.resetPath(recompute: boolean)
 
 	module.waypoints = nil
 	module.waypointIndex = 0
-	
+	getgenv().moveVector = nil
+
 	if char.humanoid then char.humanoid:MoveTo(char.root.Position) end
 	if recompute then prevTargetPos = nil end
 end
@@ -52,10 +54,10 @@ function module.followWaypoints()
 	end
 
 	local waypointPos = module.waypoints[module.waypointIndex].Position
-	char.humanoid:MoveTo(waypointPos)
-	
 	local rootPosition = char.root.Position
-	local direction = waypointPos - rootPosition
+	
+	local direction: Vector3 = waypointPos - rootPosition
+	getgenv().moveVector = direction.Unit
 
 	waypointRaycastParams.FilterDescendantsInstances = {char.character}
 
@@ -67,7 +69,7 @@ end
 
 function module.computePath()
 	if not module.targetPos then module.resetPath(true) return end
-	
+
 	if prevTargetPos == module.targetPos and not module.pathCompleted then return end
 	prevTargetPos = module.targetPos
 
@@ -91,7 +93,7 @@ end
 function module.updateAction()
 	module.currentAction = nil
 	module.targetPos = nil
-	
+
 	local actions = {}
 
 	for _,action in module.actions do
@@ -134,7 +136,7 @@ function module.createAction(name, priority, callback)
 		action.pathCompleted:Destroy()
 		module.actions[name] = nil
 	end
-	
+
 	module.actions[name] = action
 	return action
 end
@@ -152,9 +154,9 @@ end
 module.connection = runService.Heartbeat:Connect(function()
 	if not char.humanoid or not char.root or not module.pathfindingEnabled then return end
 	module.followWaypoints()
-	
+
 	char.player.DevComputerMovementMode = module.pathfindingEnabled and Enum.DevComputerMovementMode.Scriptable or Enum.DevComputerMovementMode.UserChoice
-	
+
 	local currentTime = os.clock()
 	if currentTime-lastUpdated < 1/module.updateRate then return end
 	lastUpdated = currentTime
