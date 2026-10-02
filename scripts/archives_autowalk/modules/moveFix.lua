@@ -1,4 +1,4 @@
-getgenv().moveVector = Vector3.new(0,0,1)
+getgenv().moveVector = nil
 local char = loadstring(game:HttpGet("https://raw.githubusercontent.com/GIFKITS/gifscripts/refs/heads/main/scripts/archives_autowalk/modules/char.lua"))()
 
 for _,t in pairs(getreg() or {}) do
@@ -13,7 +13,7 @@ for _,t in pairs(getreg() or {}) do
 	break
 end
 
-game:GetService("RunService").RenderStepped:Connect(function()
-	if not char.humanoid or not getgenv().moveVector then return end
+return game:GetService("RunService").RenderStepped:Connect(function()
+	if not char.humanoid and getgenv().moveVector then return end
 	char.humanoid:Move(getgenv().moveVector)
 end)
