@@ -64,7 +64,7 @@ function module.followWaypoints()
 	end
 
 	local waypointPos = module.waypoints[module.waypointIndex].Position
-	char.humanoid:MoveTo(waypointPos)
+	--char.humanoid:MoveTo(waypointPos)
 	
 	local rootPosition = char.root.Position
 	local direction = waypointPos - rootPosition
