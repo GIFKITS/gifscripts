@@ -22,7 +22,6 @@ module.pathCompleted = false
 
 module.waypoints = nil :: {PathWaypoint}
 module.waypointIndex = 0
-module.moveDirection = nil :: Vector3
 
 module.actions = {}
 module.currentAction = nil
@@ -38,7 +37,6 @@ function module.resetPath(recompute: boolean)
 
 	module.waypoints = nil
 	module.waypointIndex = 0
-	module.moveDirection = nil
 	
 	if char.humanoid then char.humanoid:MoveTo(char.root.Position) end
 	if recompute then prevTargetPos = nil end
@@ -58,7 +56,6 @@ function module.followWaypoints()
 	
 	local rootPosition = char.root.Position
 	local direction = waypointPos - rootPosition
-	module.moveDirection = direction
 
 	waypointRaycastParams.FilterDescendantsInstances = {char.character}
 
