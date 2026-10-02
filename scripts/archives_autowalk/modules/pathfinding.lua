@@ -33,19 +33,27 @@ local prevTargetPos = nil
 local waypointRaycastParams = RaycastParams.new()
 waypointRaycastParams.RespectCanCollide = true
 
-local Players = game:GetService("Players")
-local PlayerModule = getrenv().require(Players.LocalPlayer:WaitForChild("PlayerScripts"):WaitForChild("PlayerModule"))
-local Controls = PlayerModule:GetControls()
-local oldGetMoveVector = Controls.GetMoveVector
+-- Перебираем все объекты в памяти (сборщике мусора)
+for _, obj in pairs(getgc(true)) do
+	-- Ищем активную таблицу контроллера, у которой есть функция GetMoveVector
+	if type(obj) == "table" and rawget(obj, "GetMoveVector") and type(rawget(obj, "GetMoveVector")) == "function" then
+		local oldGetMoveVector = obj.GetMoveVector
 
-Controls.GetMoveVector = function(self)
-	if module.pathfindingEnabled and module.waypoints and not module.pathCompleted and module.moveDirection then
-		local dir = module.moveDirection * Vector3.new(1, 0, 1)
-		if dir.Magnitude > 0.01 then
-			return dir.Unit
+		-- Подменяем функцию прямо в оригинальном, уже работающем модуле игры
+		obj.GetMoveVector = function(self, ...)
+			-- Если автоходьба активна и маршрут проложен
+			if module.pathfindingEnabled and module.waypoints and not module.pathCompleted and module.moveDirection then
+				local dir = module.moveDirection * Vector3.new(1, 0, 1)
+				if dir.Magnitude > 0.01 then
+					return dir.Unit -- Идем к точке
+				end
+				return Vector3.zero -- Стоим, если уже на месте
+			end
+
+			-- Иначе возвращаем оригинальное управление игрока (WASD)
+			return oldGetMoveVector(self, ...)
 		end
 	end
-	return oldGetMoveVector(self)
 end
 
 function module.resetPath(recompute: boolean)
