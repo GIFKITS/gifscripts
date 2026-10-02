@@ -14,7 +14,6 @@ module.agentParams = {
 	AgentCanJump = false,
 	Costs = {
 		Avoid = math.huge,
-		[""] = math.huge,
 	}
 }
 module.path = nil :: Path
@@ -156,6 +155,8 @@ end
 module.connection = runService.Heartbeat:Connect(function()
 	if not char.humanoid or not char.root or not module.pathfindingEnabled then return end
 	module.followWaypoints()
+	
+	char.player.DevComputerMovementMode = module.pathfindingEnabled and Enum.DevComputerMovementMode.Scriptable or Enum.DevComputerMovementMode.UserChoice
 	
 	local currentTime = os.clock()
 	if currentTime-lastUpdated < 1/module.updateRate then return end
