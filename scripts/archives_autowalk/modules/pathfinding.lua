@@ -33,16 +33,20 @@ local prevTargetPos = nil
 local waypointRaycastParams = RaycastParams.new()
 waypointRaycastParams.RespectCanCollide = true
 
-local old
-old = hookmetamethod(game, "__namecall", function(self, ...)
-	if not checkcaller() and getnamecallmethod() == "Move" and typeof(self) == "Instance" and self.ClassName == "Humanoid" then
-		if module.pathfindingEnabled and module.waypoints and not module.pathCompleted and module.moveDirection then
-			local dir = module.moveDirection * Vector3.new(1, 0, 1)
-			return old(self, dir.Magnitude > 0.01 and dir.Unit or Vector3.zero, select(2, ...))
+local Players = game:GetService("Players")
+local PlayerModule = getrenv().require(Players.LocalPlayer:WaitForChild("PlayerScripts"):WaitForChild("PlayerModule"))
+local Controls = PlayerModule:GetControls()
+local oldGetMoveVector = Controls.GetMoveVector
+
+Controls.GetMoveVector = function(self)
+	if module.pathfindingEnabled and module.waypoints and not module.pathCompleted and module.moveDirection then
+		local dir = module.moveDirection * Vector3.new(1, 0, 1)
+		if dir.Magnitude > 0.01 then
+			return dir.Unit
 		end
 	end
-	return old(self, ...)
-end)
+	return oldGetMoveVector(self)
+end
 
 function module.resetPath(recompute: boolean)
 	module.path = nil
@@ -52,6 +56,7 @@ function module.resetPath(recompute: boolean)
 	module.waypointIndex = 0
 	module.moveDirection = nil
 	
+	--if char.humanoid then char.humanoid:WalkTo() end
 	if recompute then prevTargetPos = nil end
 end
 
