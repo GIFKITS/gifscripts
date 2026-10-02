@@ -33,29 +33,6 @@ local prevTargetPos = nil
 local waypointRaycastParams = RaycastParams.new()
 waypointRaycastParams.RespectCanCollide = true
 
--- Перебираем все объекты в памяти (сборщике мусора)
-for _, obj in pairs(getgc(true)) do
-	-- Ищем активную таблицу контроллера, у которой есть функция GetMoveVector
-	if type(obj) == "table" and rawget(obj, "GetMoveVector") and type(rawget(obj, "GetMoveVector")) == "function" then
-		local oldGetMoveVector = obj.GetMoveVector
-
-		-- Подменяем функцию прямо в оригинальном, уже работающем модуле игры
-		obj.GetMoveVector = function(self, ...)
-			-- Если автоходьба активна и маршрут проложен
-			if module.pathfindingEnabled and module.waypoints and not module.pathCompleted and module.moveDirection then
-				local dir = module.moveDirection * Vector3.new(1, 0, 1)
-				if dir.Magnitude > 0.01 then
-					return dir.Unit -- Идем к точке
-				end
-				return Vector3.zero -- Стоим, если уже на месте
-			end
-
-			-- Иначе возвращаем оригинальное управление игрока (WASD)
-			return oldGetMoveVector(self, ...)
-		end
-	end
-end
-
 function module.resetPath(recompute: boolean)
 	module.path = nil
 	module.pathCompleted = false
@@ -64,7 +41,7 @@ function module.resetPath(recompute: boolean)
 	module.waypointIndex = 0
 	module.moveDirection = nil
 	
-	--if char.humanoid then char.humanoid:WalkTo() end
+	if char.humanoid then char.humanoid:MoveTo(char.root.Position) end
 	if recompute then prevTargetPos = nil end
 end
 
@@ -78,6 +55,7 @@ function module.followWaypoints()
 	end
 
 	local waypointPos = module.waypoints[module.waypointIndex].Position
+	char.humanoid:MoveTo(waypointPos)
 	
 	local rootPosition = char.root.Position
 	local direction = waypointPos - rootPosition
