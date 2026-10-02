@@ -35,9 +35,11 @@ waypointRaycastParams.RespectCanCollide = true
 
 local old
 old = hookmetamethod(game, "__namecall", function(self, ...)
-	if not checkcaller() and getnamecallmethod() == "Move" and self.ClassName == "Humanoid" and module.pathfindingEnabled and module.waypoints and not module.pathCompleted and module.moveDirection then
-		local dir = module.moveDirection * Vector3.new(1, 0, 1)
-		return old(self, dir.Magnitude > 0.01 and dir.Unit or Vector3.zero, select(2, ...))
+	if not checkcaller() and getnamecallmethod() == "Move" and typeof(self) == "Instance" and self.ClassName == "Humanoid" then
+		if module.pathfindingEnabled and module.waypoints and not module.pathCompleted and module.moveDirection then
+			local dir = module.moveDirection * Vector3.new(1, 0, 1)
+			return old(self, dir.Magnitude > 0.01 and dir.Unit or Vector3.zero, select(2, ...))
+		end
 	end
 	return old(self, ...)
 end)
