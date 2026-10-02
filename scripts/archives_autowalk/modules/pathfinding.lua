@@ -50,7 +50,6 @@ function module.resetPath(recompute: boolean)
 	module.waypointIndex = 0
 	module.moveDirection = nil
 	
-	if char.humanoid then char.humanoid:MoveTo(char.root.Position) end
 	if recompute then prevTargetPos = nil end
 end
 
@@ -64,7 +63,6 @@ function module.followWaypoints()
 	end
 
 	local waypointPos = module.waypoints[module.waypointIndex].Position
-	--char.humanoid:MoveTo(waypointPos)
 	
 	local rootPosition = char.root.Position
 	local direction = waypointPos - rootPosition
