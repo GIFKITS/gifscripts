@@ -14,7 +14,6 @@ for _,t in pairs(getreg() or {}) do
 end
 
 return game:GetService("RunService").RenderStepped:Connect(function()
-	if char.humanoid and getgenv().moveVector then 
-		char.humanoid:Move(getgenv().moveVector, false)
-	end
+	if not char.humanoid or not getgenv().moveVector then return end
+	char.humanoid:Move(getgenv().moveVector)
 end)
