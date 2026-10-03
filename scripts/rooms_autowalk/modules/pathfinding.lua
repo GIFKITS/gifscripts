@@ -5,7 +5,7 @@ local runService = game:GetService("RunService")
 
 local char = loadstring(game:HttpGet("https://raw.githubusercontent.com/GIFKITS/gifscripts/refs/heads/main/scripts/rooms_autowalk/modules/char.lua"))()
 
-module.pathfindingEnabled = true
+module.pathfindingEnabled = false
 module.updateRate = 2
 
 module.agentParams = {
