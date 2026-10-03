@@ -4,11 +4,8 @@ local pathfindingService = game:GetService("PathfindingService")
 local runService = game:GetService("RunService")
 
 local char = loadstring(game:HttpGet("https://raw.githubusercontent.com/GIFKITS/gifscripts/refs/heads/main/scripts/rooms_autowalk/modules/char.lua"))()
-local moveConnections = loadstring(game:HttpGet("github.com/GIFKITS/gifscripts/raw/refs/heads/main/scripts/rooms_autowalk/modules/move.lua"))()
 
-module.connections = {char.connection, table.unpack(moveConnections)}
-
-module.pathfindingEnabled = false
+module.pathfindingEnabled = true
 module.updateRate = 2
 
 module.agentParams = {
@@ -41,7 +38,7 @@ function module.resetPath(recompute: boolean)
 
 	module.waypoints = nil
 	module.waypointIndex = 0
-	getgenv().moveVector = nil
+	getgenv().gifscript.moveVector = nil
 
 	if recompute then prevTargetPos = nil end
 end
@@ -59,7 +56,7 @@ function module.followWaypoints()
 	local rootPos = char.root.Position
 	local direction: Vector3 = waypointPos - rootPos
 
-	getgenv().moveVector = direction.Unit
+	getgenv().gifscript.moveVector = direction.Unit
 	waypointRaycastParams.FilterDescendantsInstances = {char.character}
 
 	local raycast = workspace:Raycast(rootPos, direction, waypointRaycastParams)
@@ -148,11 +145,11 @@ function module.togglePathfinding(enable: boolean)
 		module.resetPath(true)
 		module.currentAction = nil
 		module.targetPos = nil
-		getgenv().moveVector = nil
+		getgenv().gifscript.moveVector = nil
 	end
 end
 
-table.insert(module.connections, runService.Heartbeat:Connect(function()
+table.insert(getgenv().gifscript.connections, runService.Heartbeat:Connect(function()
 	if not char.humanoid or not char.root or not module.pathfindingEnabled then return end
 	module.followWaypoints()
 
