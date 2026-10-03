@@ -4,7 +4,9 @@ local pathfindingService = game:GetService("PathfindingService")
 local runService = game:GetService("RunService")
 
 local char = loadstring(game:HttpGet("https://raw.githubusercontent.com/GIFKITS/gifscripts/refs/heads/main/scripts/archives_autowalk/modules/char.lua"))()
-local moveConnection = loadstring(game:HttpGet("https://raw.githubusercontent.com/GIFKITS/gifscripts/refs/heads/main/scripts/archives_autowalk/modules/move.lua"))()
+
+module.connections = {}
+table.insert(module.connections, loadstring(game:HttpGet("https://raw.githubusercontent.com/GIFKITS/gifscripts/refs/heads/main/scripts/archives_autowalk/modules/move.lua"))())
 
 module.pathfindingEnabled = true
 module.updateRate = 2
@@ -53,7 +55,7 @@ function module.followWaypoints()
 		return
 	end
 
-	local waypointPos = module.waypoints[module.waypointIndex].Position + module.agentParams.AgentHeight / 2
+	local waypointPos = module.waypoints[module.waypointIndex].Position + Vector3.new(0, module.agentParams.AgentHeight / 2, 0)
 	local rootPos = char.root.Position
 	local direction: Vector3 = waypointPos - rootPos
 	
@@ -150,7 +152,7 @@ function module.togglePathfinding(enable: boolean)
 	end
 end
 
-module.connection = runService.Heartbeat:Connect(function()
+table.insert(module.connections, runService.Heartbeat:Connect(function()
 	if not char.humanoid or not char.root or not module.pathfindingEnabled then return end
 	module.followWaypoints()
 
@@ -162,6 +164,6 @@ module.connection = runService.Heartbeat:Connect(function()
 
 	module.updateAction()
 	module.computePath()
-end)
+end))
 
 return module
