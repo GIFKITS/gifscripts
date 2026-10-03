@@ -39,21 +39,26 @@ function module.computeDistance(targetPos: Vector3)
 	local success, err = pcall(function()
 		path:ComputeAsync(char.root.Position, targetPos)
 	end)
+	
 	if success and path.Status == Enum.PathStatus.Success then
 		local waypoints = path:GetWaypoints()
-		local rootPos = char.root.Position
-		local prevWaypointPos = nil
-		
-		for _,waypoint in pairs(waypoints) do
+		if #waypoints == 0 then return 0 end
+
+		local totalDistance = 0
+		local prevWaypointPos = char.root.Position
+
+		for _, waypoint in pairs(waypoints) do
 			local waypointPos = waypoint.Position
-			if not prevWaypointPos then prevWaypointPos = rootPos end
-			
+
 			local distance = (prevWaypointPos - waypointPos).Magnitude
 			totalDistance += distance
 			prevWaypointPos = waypointPos
 		end
+
+		return totalDistance
 	end
-	return totalDistance == 0 and math.huge or totalDistance
+	
+	return math.huge
 end
 
 function module.resetPath(recompute: boolean)
