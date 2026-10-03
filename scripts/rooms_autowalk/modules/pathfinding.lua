@@ -8,7 +8,7 @@ local moveConnections = loadstring(game:HttpGet("github.com/GIFKITS/gifscripts/r
 
 module.connections = {char.connection, table.unpack(moveConnections)}
 
-module.pathfindingEnabled = true
+module.pathfindingEnabled = false
 module.updateRate = 2
 
 module.agentParams = {
