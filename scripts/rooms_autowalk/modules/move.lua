@@ -1,5 +1,5 @@
 getgenv().moveVector = nil
-local char = loadstring(game:HttpGet("https://raw.githubusercontent.com/GIFKITS/gifscripts/refs/heads/main/scripts/archives_autowalk/modules/char.lua"))()
+local char = loadstring(game:HttpGet("https://raw.githubusercontent.com/GIFKITS/gifscripts/refs/heads/main/scripts/rooms_autowalk/modules/char.lua"))()
 
 for _,t in pairs(getreg() or {}) do
 	if type(t) ~= "table" or not rawget(t, "GetMoveVector") then continue end
@@ -13,7 +13,7 @@ for _,t in pairs(getreg() or {}) do
 	break
 end
 
-return game:GetService("RunService").RenderStepped:Connect(function()
+return {char.connection, game:GetService("RunService").RenderStepped:Connect(function()
 	if not char.humanoid or not getgenv().moveVector then return end
 	char.humanoid:Move(getgenv().moveVector)
-end)
+end)}
