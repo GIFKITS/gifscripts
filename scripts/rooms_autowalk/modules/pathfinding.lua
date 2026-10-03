@@ -39,7 +39,7 @@ function module.computeDistance(targetPos: Vector3)
 	local success, err = pcall(function()
 		path:ComputeAsync(char.root.Position, targetPos)
 	end)
-	warn("Pathfinding attempt... Status:", path.Status.Name)
+	warn("Pathfinding attempt... Status:", path.Status.Name, err)
 	if success and path.Status == Enum.PathStatus.Success then
 		warn("success")
 		local waypoints = path:GetWaypoints()
