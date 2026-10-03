@@ -4,14 +4,14 @@ local pathfindingService = game:GetService("PathfindingService")
 local runService = game:GetService("RunService")
 
 local char = loadstring(game:HttpGet("https://raw.githubusercontent.com/GIFKITS/gifscripts/refs/heads/main/scripts/archives_autowalk/modules/char.lua"))()
-local moveFixConnection = loadstring(game:HttpGet("https://raw.githubusercontent.com/GIFKITS/gifscripts/refs/heads/main/scripts/archives_autowalk/modules/moveFix.lua"))()
+local moveConnection = loadstring(game:HttpGet("https://raw.githubusercontent.com/GIFKITS/gifscripts/refs/heads/main/scripts/archives_autowalk/modules/move.lua"))()
 
 module.pathfindingEnabled = true
 module.updateRate = 2
 
 module.agentParams = {
-	AgentRadius = 1.5,
-	AgentHeight = 5.0,
+	AgentRadius = 2,
+	AgentHeight = 5,
 	AgentCanJump = false,
 	Costs = {
 		Avoid = math.huge,
@@ -29,6 +29,7 @@ module.currentAction = nil
 
 local lastUpdated = 0
 local prevTargetPos = nil
+
 local waypointRaycastParams = RaycastParams.new()
 waypointRaycastParams.RespectCanCollide = true
 
@@ -40,7 +41,6 @@ function module.resetPath(recompute: boolean)
 	module.waypointIndex = 0
 	getgenv().moveVector = nil
 
-	if char.humanoid then char.humanoid:MoveTo(char.root.Position) end
 	if recompute then prevTargetPos = nil end
 end
 
@@ -53,15 +53,14 @@ function module.followWaypoints()
 		return
 	end
 
-	local waypointPos = module.waypoints[module.waypointIndex].Position
-	local rootPosition = char.root.Position
+	local waypointPos = module.waypoints[module.waypointIndex].Position + module.agentParams.AgentHeight / 2
+	local rootPos = char.root.Position
+	local direction: Vector3 = waypointPos - rootPos
 	
-	local direction: Vector3 = waypointPos - rootPosition
 	getgenv().moveVector = direction.Unit
-
 	waypointRaycastParams.FilterDescendantsInstances = {char.character}
 
-	local raycast = workspace:Raycast(rootPosition, direction, waypointRaycastParams)
+	local raycast = workspace:Raycast(rootPos, direction, waypointRaycastParams)
 	if raycast then module.resetPath(true) return end
 
 	if (direction*Vector3.new(1,0,1)).Magnitude < 1 then module.waypointIndex += 1 end
@@ -83,7 +82,6 @@ function module.computePath()
 	if success and module.path.Status == Enum.PathStatus.Success then
 		module.waypoints = module.path:GetWaypoints()
 		module.waypointIndex = 2
-		warn("PATH SUCCESS")
 		return
 	end
 
@@ -148,6 +146,7 @@ function module.togglePathfinding(enable: boolean)
 		module.resetPath(true)
 		module.currentAction = nil
 		module.targetPos = nil
+		getgenv().moveVector = nil
 	end
 end
 
