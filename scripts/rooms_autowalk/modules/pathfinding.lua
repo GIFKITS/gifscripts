@@ -103,6 +103,7 @@ function module.computePath()
 	end)
 
 	if success and module.path.Status == Enum.PathStatus.Success then
+		warn("success pathfinding")
 		module.waypoints = module.path:GetWaypoints()
 		module.waypointIndex = 2
 		return
