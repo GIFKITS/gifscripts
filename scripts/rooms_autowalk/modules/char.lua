@@ -13,7 +13,7 @@ function module.updatePlayer()
 	module.root = module.character:WaitForChild("HumanoidRootPart") :: BasePart
 end
 
-module.player.CharacterAdded:Connect(module.updatePlayer)
+module.connection = module.player.CharacterAdded:Connect(module.updatePlayer)
 module.updatePlayer()
 
 return module
