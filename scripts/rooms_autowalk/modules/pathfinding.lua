@@ -39,8 +39,9 @@ function module.computeDistance(targetPos: Vector3)
 	local success, err = pcall(function()
 		path:ComputeAsync(char.root.Position, targetPos)
 	end)
-	
+	warn("try")
 	if success and path.Status == Enum.PathStatus.Success then
+		warn("success")
 		local waypoints = path:GetWaypoints()
 		if #waypoints == 0 then return 0 end
 
