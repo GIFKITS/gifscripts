@@ -1,5 +1,7 @@
 local module = {}
 
+local char = loadstring(game:HttpGet("https://raw.githubusercontent.com/GIFKITS/gifscripts/refs/heads/main/scripts/rooms_autowalk/modules/char.lua"))()
+
 local replicatedStorage = game:GetService("ReplicatedStorage")
 local collectionService = game:GetService("CollectionService")
 
@@ -25,14 +27,14 @@ end
 function module.getClosestLocker()
 	local lockers = collectionService:GetTagged("HidingSpot")
 	local closestLocker = {nil, math.huge}
-	
+
 	for _,locker: Model in pairs(lockers or {}) do
 		local lockerPos = module.getLockerPos(locker)
 		if not lockerPos then continue end
-		local distance = getgenv().gifscript.pathfinding.computeDistance(lockerPos)
+
+		local distance = (char.root.Position - lockerPos).Magnitude
 		if distance < closestLocker[2] then closestLocker[1] = locker closestLocker[2] = distance end
 	end
-	
 	return closestLocker[1]
 end
 
