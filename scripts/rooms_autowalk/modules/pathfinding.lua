@@ -10,13 +10,14 @@ module.pathfindingEnabled = false
 module.updateRate = 2
 
 module.agentParams = {
-	AgentRadius = 2,
-	AgentHeight = 5,
+	AgentRadius = 1.5,
 	AgentCanJump = false,
+	WaypointSpacing = 1,
 	Costs = {
 		Avoid = math.huge,
 	}
 }
+
 module.path = nil :: Path
 module.targetPos = nil :: Vector3?
 module.pathCompleted = false
