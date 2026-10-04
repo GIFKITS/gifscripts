@@ -4,7 +4,6 @@ local pathfindingService = game:GetService("PathfindingService")
 local runService = game:GetService("RunService")
 
 local char = loadstring(game:HttpGet("https://raw.githubusercontent.com/GIFKITS/gifscripts/refs/heads/main/scripts/rooms_autowalk/modules/char.lua"))()
-local move = loadstring(game:HttpGet("https://raw.githubusercontent.com/GIFKITS/gifscripts/refs/heads/main/scripts/rooms_autowalk/modules/move.lua"))()
 
 module.pathfindingEnabled = false
 module.updateRate = 2
