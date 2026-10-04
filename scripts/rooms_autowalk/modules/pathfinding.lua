@@ -73,6 +73,7 @@ function module.followWaypoints()
 
 	if module.waypointIndex > #module.waypoints then
 		module.pathCompleted = true
+		getgenv().gifscript.moveVector = nil
 		if module.currentAction and module.currentAction.pathCompleted then module.currentAction.pathCompleted:Fire() end
 		return
 	end
