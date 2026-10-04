@@ -3,7 +3,7 @@ local module = {}
 local pathfindingService = game:GetService("PathfindingService")
 local runService = game:GetService("RunService")
 
-local char = loadstring(game:HttpGet("https://raw.githubusercontent.com/GIFKITS/gifscripts/refs/heads/main/scripts/rooms_autowalk/modules/char.lua"))()
+local char = getgenv().gifscript.char
 
 module.pathfindingEnabled = false
 module.updateRate = 2
@@ -32,30 +32,6 @@ local prevTargetPos = nil
 
 local waypointRaycastParams = RaycastParams.new()
 waypointRaycastParams.RespectCanCollide = true
-
-function module.computeDistance(targetPos: Vector3)
-	local totalDistance = 0
-	local path = pathfindingService:CreatePath(module.agentParams)
-
-	local success, err = pcall(function()
-		path:ComputeAsync(char.root.Position, targetPos)
-	end)
-	if success and path.Status == Enum.PathStatus.Success then
-		local waypoints = path:GetWaypoints()
-		local rootPos = char.root.Position
-		local prevWaypointPos = nil
-
-		for _,waypoint in pairs(waypoints) do
-			local waypointPos = waypoint.Position
-			if not prevWaypointPos then prevWaypointPos = rootPos end
-
-			local distance = (prevWaypointPos - waypointPos).Magnitude
-			totalDistance += distance
-			prevWaypointPos = waypointPos
-		end
-	end
-	return totalDistance == 0 and math.huge or totalDistance
-end
 
 function module.resetPath(recompute: boolean)
 	module.path = nil
