@@ -1,5 +1,5 @@
 getgenv().gifscript.moveVector = nil
-local char = loadstring(game:HttpGet("https://raw.githubusercontent.com/GIFKITS/gifscripts/refs/heads/main/scripts/rooms_autowalk/modules/char.lua"))()
+local char = getgenv().gifscript.char
 
 for _,t in pairs(getreg() or {}) do
 	if type(t) ~= "table" or not rawget(t, "GetMoveVector") then continue end
