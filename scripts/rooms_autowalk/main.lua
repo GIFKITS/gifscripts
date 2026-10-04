@@ -1,3 +1,4 @@
+if getgenv().gifscript then warn("script already exist") return end
 getgenv().gifscript = {connections = {}}
 
 local fluent = loadstring(game:HttpGet("https://github.com/dawid-scripts/Fluent/releases/latest/download/main.lua"))()
