@@ -1,9 +1,13 @@
 if getgenv().gifscript then warn("script already exist") return end
-getgenv().gifscript = {connections = {}}
 
-local fluent = loadstring(game:HttpGet("https://github.com/dawid-scripts/Fluent/releases/latest/download/main.lua"))()
+getgenv().gifscript = {}
+getgenv().gifscript.connections = {}
+getgenv().gifscript.hooks = {}
+
 local pathfinding = loadstring(game:HttpGet("https://raw.githubusercontent.com/GIFKITS/gifscripts/refs/heads/main/scripts/rooms_autowalk/modules/pathfinding.lua"))()
 getgenv().gifscript.pathfinding = pathfinding
+
+local fluent = loadstring(game:HttpGet("https://github.com/dawid-scripts/Fluent/releases/latest/download/main.lua"))()
 local roomsManager = loadstring(game:HttpGet("https://raw.githubusercontent.com/GIFKITS/gifscripts/refs/heads/main/scripts/rooms_autowalk/modules/roomsManager.lua"))()
 
 -- UI --
@@ -35,13 +39,15 @@ tabs.main:AddButton({
 	Description = "Unload the script",
 	Callback = function()
 		pathfinding.togglePathfinding(false)
-		
+		for _,hook in pairs(getgenv().gifscript.hooks or {}) do
+			hook[1][hook[2]] = hook[3]
+		end
 		for _,connection in pairs(getgenv().gifscript.connections or {}) do
 			connection:Disconnect()
 		end
 		table.remove(getgenv().gifscript)
 		getgenv().gifscript = nil
-		
+
 		fluent:Destroy()
 	end
 })
