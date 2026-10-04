@@ -4,10 +4,14 @@ getgenv().gifscript = {}
 getgenv().gifscript.connections = {}
 getgenv().gifscript.hooks = {}
 
-local pathfinding = loadstring(game:HttpGet("https://raw.githubusercontent.com/GIFKITS/gifscripts/refs/heads/main/scripts/rooms_autowalk/modules/pathfinding.lua"))()
-getgenv().gifscript.pathfinding = pathfinding
+local char = loadstring(game:HttpGet("https://raw.githubusercontent.com/GIFKITS/gifscripts/refs/heads/main/scripts/rooms_autowalk/modules/char.lua"))()
+getgenv().gifscript.char = char
+
+local move = loadstring(game:HttpGet("https://raw.githubusercontent.com/GIFKITS/gifscripts/refs/heads/main/scripts/rooms_autowalk/modules/move.lua"))()
+local camera = loadstring(game:HttpGet("https://raw.githubusercontent.com/GIFKITS/gifscripts/refs/heads/main/scripts/rooms_autowalk/modules/camera.lua"))()
 
 local fluent = loadstring(game:HttpGet("https://github.com/dawid-scripts/Fluent/releases/latest/download/main.lua"))()
+local pathfinding = loadstring(game:HttpGet("https://raw.githubusercontent.com/GIFKITS/gifscripts/refs/heads/main/scripts/rooms_autowalk/modules/pathfinding.lua"))()
 local roomsManager = loadstring(game:HttpGet("https://raw.githubusercontent.com/GIFKITS/gifscripts/refs/heads/main/scripts/rooms_autowalk/modules/roomsManager.lua"))()
 
 -- UI --
@@ -39,23 +43,47 @@ tabs.main:AddButton({
 	Description = "Unload the script",
 	Callback = function()
 		pathfinding.togglePathfinding(false)
+		
 		for _,hook in pairs(getgenv().gifscript.hooks or {}) do
 			hook[1][hook[2]] = hook[3]
 		end
 		for _,connection in pairs(getgenv().gifscript.connections or {}) do
 			connection:Disconnect()
 		end
-		table.remove(getgenv().gifscript)
+		
 		getgenv().gifscript = nil
-
 		fluent:Destroy()
 	end
 })
 
 -- PATHFINDING --
 
+local playerGui = char.player:WaitForChild("PlayerGui")
+local mainUI = playerGui:WaitForChild("MainUI")
+
+local A90: Frame = mainUI:WaitForChild("Jumpscare"):WaitForChild("Jumpscare_A90")
+local targetLocker = nil
+
 pathfinding.createAction("door", 1, function()
-	return Vector3.new(264.300171, -0.401132464, -126.140739)
+	local door: Model = roomsManager.getDoor()
+	return door and door:GetPivot().Position or nil
+end)
+
+local lockerAction = pathfinding.createAction("locker", 2, function()
+	local danger = workspace:FindFirstChild("A60") or workspace:FindFirstChild("A120")
+	if not danger then return end
+	
+	local locker = roomsManager.getClosestLocker()
+	targetLocker = locker
+	return locker and roomsManager.getLockerPos(locker) or nil
+end)
+
+table.insert(getgenv().gifscript.connections, lockerAction.pathCompleted.Event:Connect(function()
+	local
+end))
+
+pathfinding.createAction("a90", 3, function()
+	return A90.Visible and Vector3.one * math.huge or nil
 end)
 
 warn("SUCCESS")
