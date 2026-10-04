@@ -4,6 +4,11 @@ local char = loadstring(game:HttpGet("https://raw.githubusercontent.com/GIFKITS/
 for _,t in pairs(getreg() or {}) do
 	if type(t) ~= "table" or not rawget(t, "GetMoveVector") then continue end
 	local getMoveVector = t.GetMoveVector
+	
+	table.insert(getgenv().gifscript.hooks, {
+		t, "GetMoveVector", getMoveVector
+	})
+	
 	t.GetMoveVector = function(self, ...)
 		if getgenv().gifscript.moveVector then 
 			return Vector3.new(0, 0, -1)
