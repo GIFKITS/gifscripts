@@ -1,4 +1,5 @@
 if getgenv().gifscript then warn("script already exist") return end
+warn("Loading...")
 
 getgenv().gifscript = {}
 getgenv().gifscript.connections = {}
@@ -52,6 +53,7 @@ tabs.main:AddButton({
 		end
 		
 		getgenv().gifscript = nil
+		warn("Unloaded")
 		fluent:Destroy()
 	end
 })
@@ -62,7 +64,7 @@ local playerGui = char.player:WaitForChild("PlayerGui")
 local mainUI = playerGui:WaitForChild("MainUI")
 
 local A90: Frame = mainUI:WaitForChild("Jumpscare"):WaitForChild("Jumpscare_A90")
-local targetLocker = nil
+local targetLocker: Model = nil
 
 pathfinding.createAction("door", 1, function()
 	local door: Model = roomsManager.getDoor()
@@ -79,11 +81,24 @@ local lockerAction = pathfinding.createAction("locker", 2, function()
 end)
 
 table.insert(getgenv().gifscript.connections, lockerAction.pathCompleted.Event:Connect(function()
-	local
+	if not targetLocker then return end
+	
+	local lockerPosition = targetLocker:GetPivot().Position
+	local prompt = targetLocker:FindFirstChildOfClass("ProximityPrompt")
+	if not prompt then return end
+	
+	if A90.Visible then
+		repeat task.wait() until not A90.Visible
+	end
+	
+	getgenv().gifscript.cameraDirection = (lockerPosition - workspace.CurrentCamera.CFrame.Position).Unit
+	task.wait(.2)
+	fireproximityprompt(prompt)
+	getgenv().gifscript.cameraDirection = nil
 end))
 
 pathfinding.createAction("a90", 3, function()
 	return A90.Visible and Vector3.one * math.huge or nil
 end)
 
-warn("SUCCESS")
+warn("Loading Completed")
