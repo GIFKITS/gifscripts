@@ -94,7 +94,7 @@ end
 function module.computePath()
 	if not module.targetPos then module.resetPath(true) return end
 
-	if prevTargetPos == module.targetPos and not module.pathCompleted then return end
+	if prevTargetPos == module.targetPos then return end
 	prevTargetPos = module.targetPos
 
 	module.resetPath()
