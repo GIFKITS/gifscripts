@@ -15,9 +15,10 @@ for _, t in pairs(getreg() or {}) do
 		if not dir then return end
 
 		local pitch, yaw, _ = CFrame.new(Vector3.zero, dir):ToOrientation()
-
-		t.ax_t = math.deg(yaw)
-		t.ay_t = math.clamp(math.deg(pitch), -85, 70)
+		local smoothness = 0.5
+		
+		t.ax_t = t.ax_t + ((math.deg(yaw) - t.ax_t + 180) % 360 - 180) * smoothness
+		t.ay_t = t.ay_t + (math.clamp(math.deg(pitch), -85, 70) - t.ay_t) * smoothness
 	end))
 	break
 end
