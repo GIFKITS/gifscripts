@@ -10,7 +10,7 @@ module.pathfindingEnabled = false
 module.updateRate = 2
 
 module.agentParams = {
-	AgentRadius = 2,
+	AgentRadius = 3,
 	AgentHeight = 5,
 	AgentCanJump = false,
 	Costs = {
