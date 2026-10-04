@@ -15,15 +15,24 @@ function module.getDoor()
 	return module.getCurrentRoom():FindFirstChild("Door")
 end
 
-function module.getClosestCloser()
+function module.getLockerPos(locker: Model)
+	local base = locker:FindFirstChild("Base")
+	if not base then return end
+	local attachment = base:FindFirstChild("EnterAttachment")
+	return attachment and attachment.WorldPosition or nil
+end
+
+function module.getClosestLocker()
 	local lockers = collectionService:GetTagged("HidingSpot")
 	local closestLocker = {nil, math.huge}
 	
 	for _,locker: Model in pairs(lockers or {}) do
-		local pivot = locker:GetPivot()
-		local distance = getgenv().gifscript.pathfinding.computeDistance(pivot.Position)
+		local lockerPos = module.getLockerPos(locker)
+		if not lockerPos then continue end
+		local distance = getgenv().gifscript.pathfinding.computeDistance(lockerPos)
 		if distance < closestLocker[2] then closestLocker[1] = locker closestLocker[2] = distance end
 	end
+	
 	return closestLocker[1]
 end
 
