@@ -1,6 +1,6 @@
 local module = {}
 
-local char = loadstring(game:HttpGet("https://raw.githubusercontent.com/GIFKITS/gifscripts/refs/heads/main/scripts/rooms_autowalk/modules/char.lua"))()
+local char = getgenv().gifscript.char
 
 local replicatedStorage = game:GetService("ReplicatedStorage")
 local collectionService = game:GetService("CollectionService")
