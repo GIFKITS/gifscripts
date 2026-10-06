@@ -9,7 +9,6 @@ local char = loadstring(game:HttpGet("https://raw.githubusercontent.com/GIFKITS/
 getgenv().gifscript.char = char
 
 local move = loadstring(game:HttpGet("https://raw.githubusercontent.com/GIFKITS/gifscripts/refs/heads/main/scripts/rooms_autowalk/modules/move.lua"))()
-local camera = loadstring(game:HttpGet("https://raw.githubusercontent.com/GIFKITS/gifscripts/refs/heads/main/scripts/rooms_autowalk/modules/camera.lua"))()
 
 local fluent = loadstring(game:HttpGet("https://github.com/dawid-scripts/Fluent/releases/latest/download/main.lua"))()
 local roomsManager = loadstring(game:HttpGet("https://raw.githubusercontent.com/GIFKITS/gifscripts/refs/heads/main/scripts/rooms_autowalk/modules/roomsManager.lua"))()
@@ -45,14 +44,14 @@ tabs.main:AddButton({
 	Description = "Unload the script",
 	Callback = function()
 		pathfinding.togglePathfinding(false)
-		
+
 		for _,hook in pairs(getgenv().gifscript.hooks or {}) do
 			hook[1][hook[2]] = hook[3]
 		end
 		for _,connection in pairs(getgenv().gifscript.connections or {}) do
 			connection:Disconnect()
 		end
-		
+
 		getgenv().gifscript = nil
 		warn("Unloaded")
 		fluent:Destroy()
@@ -60,6 +59,8 @@ tabs.main:AddButton({
 })
 
 -- PATHFINDING --
+
+local leaveLocker = game:GetService("ReplicatedStorage"):WaitForChild("RemotesFolder"):WaitForChild("CamLock")
 
 local playerGui = char.player:WaitForChild("PlayerGui")
 local mainUI = playerGui:WaitForChild("MainUI")
@@ -75,7 +76,7 @@ end)
 local lockerAction = pathfinding.createAction("locker", 2, function()
 	local danger = workspace:FindFirstChild("A60") or workspace:FindFirstChild("A120")
 	if not danger then return end
-	
+
 	local locker = roomsManager.getClosestLocker()
 	targetLocker = locker
 	return locker and roomsManager.getLockerPos(locker) or nil
@@ -83,19 +84,19 @@ end)
 
 table.insert(getgenv().gifscript.connections, lockerAction.pathCompleted.Event:Connect(function()
 	if not targetLocker then return end
-	
+
 	local lockerPosition = targetLocker:GetPivot().Position
 	local prompt = targetLocker:FindFirstChildOfClass("ProximityPrompt")
 	if not prompt then return end
-	
+
 	if A90.Visible then
 		repeat task.wait() until not A90.Visible
 	end
-	
-	getgenv().gifscript.cameraDirection = (lockerPosition - workspace.CurrentCamera.CFrame.Position).Unit
-	task.wait(.2)
+
 	fireproximityprompt(prompt)
-	getgenv().gifscript.cameraDirection = nil
+
+	repeat task.wait() until not (workspace:FindFirstChild("A60") or workspace:FindFirstChild("A120"))
+	leaveLocker:FireServer()
 end))
 
 pathfinding.createAction("a90", 3, function()
