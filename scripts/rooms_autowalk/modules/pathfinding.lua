@@ -58,7 +58,8 @@ function module.followWaypoints()
 	local velocity: Vector3 = char.root.AssemblyLinearVelocity * Vector3.new(1, 0, 1)
 	
 	if velocity.Magnitude < 0.1 then
-		warn("Stuck")
+		module.resetPath(true)
+		return
 	end
 	
 	getgenv().gifscript.moveVector = direction.Unit
