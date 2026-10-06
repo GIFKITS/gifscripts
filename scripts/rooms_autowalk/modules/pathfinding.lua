@@ -9,12 +9,12 @@ module.pathfindingEnabled = false
 module.updateRate = 2
 
 module.agentParams = {
-	AgentRadius = 1.6,
+	AgentRadius = 2,
 	AgentCanJump = false,
 	WaypointSpacing = 1,
 	Costs = {
 		Avoid = math.huge,
-	}
+	},
 }
 
 module.path = nil :: Path
@@ -29,9 +29,6 @@ module.currentAction = nil
 
 local lastUpdated = 0
 local prevTargetPos = nil
-
-local waypointRaycastParams = RaycastParams.new()
-waypointRaycastParams.RespectCanCollide = true
 
 function module.resetPath(recompute: boolean)
 	module.path = nil
@@ -57,12 +54,14 @@ function module.followWaypoints()
 	local waypointPos = module.waypoints[module.waypointIndex].Position + Vector3.new(0, 1, 0)
 	local rootPos = char.root.Position
 	local direction: Vector3 = waypointPos - rootPos
-
+	
+	local velocity: Vector3 = char.root.AssemblyLinearVelocity * Vector3.new(1, 0, 1)
+	
+	if velocity.Magnitude >= 0.1 then
+		warn("Moving")
+	end
+	
 	getgenv().gifscript.moveVector = direction.Unit
-	waypointRaycastParams.FilterDescendantsInstances = {char.character}
-
-	local raycast = workspace:Raycast(rootPos, direction, waypointRaycastParams)
-	if raycast then module.resetPath(true) return end
 
 	if (direction*Vector3.new(1,0,1)).Magnitude < 1 then module.waypointIndex += 1 end
 end
