@@ -25,6 +25,7 @@ function module.getLockerPos(locker: Model)
 end
 
 function module.getClosestLocker()
+	if not char.root then return end
 	local lockers = collectionService:GetTagged("HidingSpot")
 	local closestLocker = {nil, math.huge}
 
