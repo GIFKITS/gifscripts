@@ -156,7 +156,7 @@ table.insert(getgenv().gifscript.connections, runService.Heartbeat:Connect(funct
 	module.computePath()
 	
 	local rootVelocity = char.root.AssemblyLinearVelocity * Vector3.new(1, 0, 1)
-	if rootVelocity.Magnitude < 0.1 or not module.waypoints or module.pathCompleted then return end
+	if rootVelocity.Magnitude > 0.1 or not module.waypoints or module.pathCompleted then return end
 	
 	warn("Stuck")
 	module.resetPath(true)
