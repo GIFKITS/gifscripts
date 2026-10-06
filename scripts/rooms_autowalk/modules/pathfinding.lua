@@ -55,13 +55,6 @@ function module.followWaypoints()
 	local rootPos = char.root.Position
 	local direction: Vector3 = waypointPos - rootPos
 	
-	local velocity: Vector3 = char.root.AssemblyLinearVelocity * Vector3.new(1, 0, 1)
-	
-	if velocity.Magnitude < 0.1 then
-		module.resetPath(true)
-		return
-	end
-	
 	getgenv().gifscript.moveVector = direction.Unit
 
 	if (direction*Vector3.new(1,0,1)).Magnitude < 1 then module.waypointIndex += 1 end
@@ -156,11 +149,17 @@ table.insert(getgenv().gifscript.connections, runService.Heartbeat:Connect(funct
 	module.followWaypoints()
 
 	local currentTime = os.clock()
-	if currentTime-lastUpdated < 1/module.updateRate then return end
+	if currentTime-lastUpdated < 1 / module.updateRate then return end
 	lastUpdated = currentTime
-
+	
 	module.updateAction()
 	module.computePath()
+	
+	local rootVelocity = char.root.AssemblyLinearVelocity * Vector3.new(1, 0, 1)
+	if not module.waypoints or module.pathCompleted then return end
+	
+	warn("Stuck")
+	module.resetPath(true)
 end))
 
 return module
