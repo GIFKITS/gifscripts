@@ -1,13 +1,46 @@
+-- DATA --
+
 local gifscript = getgenv().gifscript
 local char = gifscript.char
 local ui = gifscript.ui
 
+local runService = game:GetService("RunService")
+local httpsService = game:GetService("HttpService")
+
+local camera = workspace.CurrentCamera
+
+-- CREAK --
+
 gifscript.entities.creak = {}
 local creakData = gifscript.entities.creak
+
+local creak: Model = nil
+local creakHum: Humanoid = nil
+local creakGraph: Animator = nil
+
+local liveEntitiesFolder = workspace:WaitForChild("LiveEntities")
+
+local function updateCreak()
+	creak = liveEntitiesFolder:FindFirstChild("Creak")
+	creakHum = creak:FindFirstChildOfClass("Humanoid")
+	creakGraph = creakHum and creakHum.Animator.CreakGraph
+	creakData.model = creak
+end
+
+-- UI --
 
 local section = ui.tabs.entities:AddSection("Creak")
 
 local creakAngerLabel = ui.tabs.entities:AddParagraph({
-	Title = "Current Anger",
-	Content = "0.0000"
+	Title = "Current Anger:",
+	Content = ""
 })
+
+-- LOOP --
+
+table.insert(gifscript.connections, runService.Heartbeat:Connect(function()
+	updateCreak()
+	
+	local creakState = httpsService:JSONDecode(creakGraph:GetAttribute("State"))
+	creakAngerLabel:SetContent(tostring(creakState.Aggression))
+end))
