@@ -43,13 +43,16 @@ local creakAngerLabel = section:AddParagraph({
 
 -- CAMERA HOOK --
 
-local hook
+local preHook = getrawmetatable(game).__index 
+local hook = nil
+
 hook = hookmetamethod(game, "__index", function(self, key)
 	if self == camera and key == "CFrame" then
 		return CFrame.new()
 	end
-	return hook(self, key)
+	return preHook(self, key)
 end)
+
 table.insert(gifscript.hooks, {hook, "__index"})
 
 -- LOOP --
