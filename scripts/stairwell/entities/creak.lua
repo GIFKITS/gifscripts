@@ -47,8 +47,8 @@ local preHook = getrawmetatable(game).__index
 local hook = nil
 
 hook = hookmetamethod(game, "__index", function(self, key)
-	if self == camera and key == "CFrame" then
-		return CFrame.new()
+	if self == camera and key == "FieldOfView" then
+		return 100
 	end
 	return preHook(self, key)
 end)
