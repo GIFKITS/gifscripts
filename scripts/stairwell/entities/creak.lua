@@ -41,6 +41,17 @@ local creakAngerLabel = section:AddParagraph({
 	Content = ""
 })
 
+-- CAMERA HOOK --
+
+local hook
+hook = hookmetamethod(game, "__index", function(self, key)
+	if self == camera and key == "CFrame" then
+		return CFrame.new()
+	end
+	return hook(self, key)
+end)
+table.insert(gifscript.hooks, {hook, "__index"})
+
 -- LOOP --
 
 table.insert(gifscript.connections, runService.Heartbeat:Connect(function()
