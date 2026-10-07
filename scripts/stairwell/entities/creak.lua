@@ -22,7 +22,7 @@ local liveEntitiesFolder = workspace:WaitForChild("LiveEntities")
 
 local function updateCreak()
 	creak = liveEntitiesFolder:FindFirstChild("Creak")
-	creakHum = creak:FindFirstChildOfClass("Humanoid")
+	creakHum = creak and creak:FindFirstChildOfClass("Humanoid")
 	creakGraph = creakHum and creakHum.Animator.CreakGraph
 	creakData.model = creak
 end
@@ -40,8 +40,6 @@ local creakAngerLabel = section:AddParagraph({
 	Title = "Current Anger:",
 	Content = ""
 })
-
-
 
 -- LOOP --
 
