@@ -1,3 +1,4 @@
+local gifscript = getgenv().gifscript
 local char = {}
 
 local players = game:GetService("Players")
@@ -13,7 +14,7 @@ function char.updateCharacter()
 	char.root = char.character:WaitForChild("HumanoidRootPart")
 end
 
-table.insert(getgenv().gifscript.connections, player.CharacterAdded:Connect(char.updateCharacter))
+table.insert(gifscript.connections, player.CharacterAdded:Connect(char.updateCharacter))
 char.updateCharacter()
 
 return char
