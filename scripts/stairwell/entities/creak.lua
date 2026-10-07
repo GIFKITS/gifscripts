@@ -31,7 +31,7 @@ end
 
 local section = ui.tabs.entities:AddSection("Creak")
 
-local creakAngerLabel = ui.tabs.entities:AddParagraph({
+local creakAngerLabel = section:AddParagraph({
 	Title = "Current Anger:",
 	Content = ""
 })
