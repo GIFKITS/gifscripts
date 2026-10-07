@@ -31,6 +31,11 @@ end
 
 local section = ui.tabs.entities:AddSection("Creak")
 
+local creakStatusLabel = section:AddParagraph({
+	Title = "Creak:",
+	Content = ""
+})
+
 local creakAngerLabel = section:AddParagraph({
 	Title = "Current Anger:",
 	Content = ""
@@ -43,5 +48,11 @@ table.insert(gifscript.connections, runService.Heartbeat:Connect(function()
 	
 	local creakState = httpsService:JSONDecode(creakGraph:GetAttribute("State"))
 	creakData.anger = math.floor(creakState.Aggression*1000)/1000
-	creakAngerLabel:SetDesc(creakData.anger)
+	
+	if creak then
+		creakStatusLabel:SetDesc("not found")
+	else
+		creakStatusLabel:SetDesc("found")
+	end
+	creakAngerLabel:SetDesc(creakData.anger or "unknown")
 end))
