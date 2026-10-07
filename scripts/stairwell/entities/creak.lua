@@ -41,6 +41,8 @@ local creakAngerLabel = section:AddParagraph({
 	Content = ""
 })
 
+
+
 -- LOOP --
 
 table.insert(gifscript.connections, runService.Heartbeat:Connect(function()
@@ -49,10 +51,6 @@ table.insert(gifscript.connections, runService.Heartbeat:Connect(function()
 	local creakState = httpsService:JSONDecode(creakGraph:GetAttribute("State"))
 	creakData.anger = math.floor(creakState.Aggression*1000)/1000
 	
-	if creak then
-		creakStatusLabel:SetDesc("not found")
-	else
-		creakStatusLabel:SetDesc("found")
-	end
+	creakStatusLabel:SetDesc(creak and "found" or "not found")
 	creakAngerLabel:SetDesc(creakData.anger or "unknown")
 end))
