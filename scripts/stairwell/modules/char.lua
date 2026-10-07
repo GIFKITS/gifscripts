@@ -13,7 +13,7 @@ function char.updateCharacter()
 	char.root = char.character:WaitForChild("HumanoidRootPart")
 end
 
-table.insert(getGnev().gifscript.connections, player.CharacterAdded:Connect(char.updateCharacter))
+table.insert(getgenv().gifscript.connections, player.CharacterAdded:Connect(char.updateCharacter))
 char.updateCharacter()
 
 return char
