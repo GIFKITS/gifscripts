@@ -42,5 +42,5 @@ table.insert(gifscript.connections, runService.Heartbeat:Connect(function()
 	updateCreak()
 	
 	local creakState = httpsService:JSONDecode(creakGraph:GetAttribute("State"))
-	creakAngerLabel:SetContent(tostring(creakState.Aggression))
+	creakAngerLabel:SetDescription(tostring(creakState.Aggression))
 end))
