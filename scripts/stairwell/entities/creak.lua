@@ -22,8 +22,8 @@ local liveEntitiesFolder = workspace:WaitForChild("LiveEntities")
 
 local function updateCreak()
 	creak = liveEntitiesFolder:FindFirstChild("Creak")
-	creakHum = creak and creak:FindFirstChildOfClass("Humanoid")
-	creakGraph = creakHum and creakHum.Animator.CreakGraph
+	creakHum = creak and creak:FindFirstChildOfClass("Humanoid") or nil
+	creakGraph = creakHum and creakHum.Animator.CreakGraph or nil
 	creakData.model = creak
 end
 
